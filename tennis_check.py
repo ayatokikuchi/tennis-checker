@@ -172,10 +172,36 @@ def get_session():
 
     return tokyo_cookies, tokyo_referer, minato_cookies, minato_referer
 
+TOKYO_WEEK_URL  = "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAjaxAction.do"
+MINATO_WEEK_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchVacantAjaxAction.do"
+
+def fetch_timeslots(week_url, bld_cd, inst_cd, use_day, cookies, referer):
+    """指定日の空き時間帯を取得。返り値: ["9:00〜11:00", "17:00〜19:00", ...]"""
+    payload = {
+        "displayNo": "prwrc2000", "useDay": use_day,
+        "bldCd": bld_cd, "instCd": inst_cd, "transVacantMode": "0",
+    }
+    headers = {"Referer": referer, "X-Requested-With": "XMLHttpRequest"}
+    try:
+        resp = requests.post(week_url, data=payload, cookies=cookies,
+                             headers=headers, timeout=15)
+        raw  = re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', resp.text)
+        data = json.loads(raw)
+        ymd  = int(use_day)
+        slots = set()
+        for zone in data.get("result", []):
+            for tr in zone.get("timeResult", []):
+                if tr.get("useDay") == ymd and tr.get("status") == 0:
+                    st = tr.get("startTime", 0)
+                    et = tr.get("endTime",   0)
+                    slots.add(f"{st//100}:{st%100:02d}〜{et//100}:{et%100:02d}")
+        return sorted(slots)
+    except Exception as e:
+        print(f"  時間帯取得失敗 bldCd={bld_cd} {use_day}: {e}")
+        return []
+
 TOKYO_AJAX_URL  = "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
 MINATO_AJAX_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
-
-def fetch_vacancy(ajax_url, bld_cd, inst_cd, use_day, cookies, referer, retry=2):
     payload = {
         "displayNo": "prwrc2000", "useDay": use_day,
         "bldCd": bld_cd, "instCd": inst_cd, "transVacantMode": "0",
@@ -205,7 +231,13 @@ def check_tokyo(target_dates, cookies, referer):
             holiday = jpholiday.is_holiday_name(date)
             label = f"{date.strftime('%-m月%-d日')}（{weekday}）{' ' + holiday if holiday else ''}"
             status = status_map.get(ymd)
-            if status == 100:   disp, ck = "▲ 一部空きあり", "partial"
+            if status == 100:
+                # 空きあり→時間帯を取得
+                slots = fetch_timeslots(TOKYO_WEEK_URL, bld_cd, inst_cd,
+                                        date.strftime("%Y%m%d"), cookies, referer)
+                slot_str = "　".join(slots) if slots else ""
+                disp = "▲ 一部空きあり" + (f"（{slot_str}）" if slot_str else "")
+                ck   = "partial"
             elif status == 200: disp, ck = "❌ 満杯", "full"
             elif status == 700: disp, ck = "－ 営業時間外", "closed"
             else:               disp, ck = "⚠️ 情報なし", "unknown"
@@ -235,6 +267,12 @@ def check_minato(target_dates, cookies, referer):
             holiday = jpholiday.is_holiday_name(date)
             label = f"{date.strftime('%-m月%-d日')}（{weekday}）{' ' + holiday if holiday else ''}"
             disp, ck = status_to_disp(date_status.get(ymd, []))
+            if ck == "partial":
+                # 空きあり→時間帯を取得（複数コートの場合は最初の1つで代表）
+                slots = fetch_timeslots(MINATO_WEEK_URL, bld_cd, inst_cds[0],
+                                        date.strftime("%Y%m%d"), cookies, referer)
+                slot_str = "　".join(slots) if slots else ""
+                disp = "▲ 一部空きあり" + (f"（{slot_str}）" if slot_str else "")
             results.append({"site": f"港区 {park_name}", "date": label,
                             "status": disp, "color_key": ck,
                             "url": "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchVacantAction.do"})
@@ -244,19 +282,40 @@ def send_email(results, target_dates):
     today_str  = datetime.date.today().strftime("%Y年%m月%d日")
     date_range = f"{target_dates[0].strftime('%-m/%-d')}〜{target_dates[-1].strftime('%-m/%-d')}（土日祝）"
     color_map  = {"partial":"#fff3cd","full":"#f0f0f0","closed":"#e9ecef","unknown":"#f8d7da"}
-    rows = ""
-    for r in results:
-        color = color_map.get(r["color_key"], "#fff")
-        rows += (
-            "<tr style=\"background:" + color + "\">"
-            "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">" + r["site"] + "</td>"
-            "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">" + r["date"] + "</td>"
-            "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">" + r["status"] + "</td>"
-            "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\"><a href=\"" + r["url"] + "\">確認</a></td>"
-            "</tr>"
-        )
+
     partial = [r for r in results if r["color_key"] == "partial"]
     summary = f"▲ 一部空きあり：{len(partial)}件"
+
+    # 東京都・港区に分けて日付順にソート
+    tokyo_results  = sorted([r for r in results if r["site"].startswith("東京都")],
+                             key=lambda r: r["date"])
+    minato_results = sorted([r for r in results if r["site"].startswith("港区")],
+                             key=lambda r: r["date"])
+
+    def build_table(data, title, color):
+        rows = ""
+        for r in data:
+            bg = color_map.get(r["color_key"], "#fff")
+            rows += (
+                "<tr style=\"background:" + bg + "\">"
+                "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">" + r["date"] + "</td>"
+                "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">" + r["site"] + "</td>"
+                "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\">" + r["status"] + "</td>"
+                "<td style=\"padding:6px 8px;border:1px solid #ddd;font-size:12px;\"><a href=\"" + r["url"] + "\">確認</a></td>"
+                "</tr>"
+            )
+        return (
+            "<h2 style=\"color:#2e7d32;margin:20px 0 8px;font-size:16px;\">" + title + "</h2>"
+            "<table style=\"width:100%;border-collapse:collapse;margin-bottom:24px;\">"
+            "<tr style=\"background:" + color + ";color:#fff;\">"
+            "<th style=\"padding:8px;border:1px solid #ddd;\">日付</th>"
+            "<th style=\"padding:8px;border:1px solid #ddd;\">施設</th>"
+            "<th style=\"padding:8px;border:1px solid #ddd;\">状況</th>"
+            "<th style=\"padding:8px;border:1px solid #ddd;\">リンク</th>"
+            "</tr>" + rows +
+            "</table>"
+        )
+
     html = (
         "<div style=\"font-family:Arial,sans-serif;max-width:800px;margin:auto;background:#f5f5f5;padding:20px;\">"
         "<div style=\"background:#2e7d32;padding:20px;border-radius:8px 8px 0 0;\">"
@@ -264,17 +323,12 @@ def send_email(results, target_dates):
         "<p style=\"color:#c8e6c9;margin:4px 0 0;\">" + today_str + " 配信　" + date_range + "　" + summary + "</p>"
         "</div>"
         "<div style=\"background:#fff;padding:20px;border-radius:0 0 8px 8px;overflow-x:auto;\">"
-        "<table style=\"width:100%;border-collapse:collapse;\">"
-        "<tr style=\"background:#2e7d32;color:#fff;\">"
-        "<th style=\"padding:8px;border:1px solid #ddd;\">施設</th>"
-        "<th style=\"padding:8px;border:1px solid #ddd;\">日付</th>"
-        "<th style=\"padding:8px;border:1px solid #ddd;\">状況</th>"
-        "<th style=\"padding:8px;border:1px solid #ddd;\">リンク</th>"
-        "</tr>" + rows +
-        "</table>"
-        "<p style=\"margin-top:16px;font-size:11px;color:#aaa;\">▲一部空きあり＝黄色　❌満杯＝グレー　－営業時間外＝薄グレー</p>"
+        + build_table(tokyo_results,  "🌳 東京都のコート", "#2e7d32")
+        + build_table(minato_results, "🏙️ 港区のコート",   "#1565c0")
+        + "<p style=\"margin-top:8px;font-size:11px;color:#aaa;\">▲一部空きあり＝黄色　❌満杯＝グレー　－営業時間外＝薄グレー</p>"
         "</div></div>"
     )
+
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"【🎾テニスコート空き情報・土日祝】{today_str}　{summary}"
     msg["From"]    = CONFIG["FROM_EMAIL"]
