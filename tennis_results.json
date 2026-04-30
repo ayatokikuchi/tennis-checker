@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-30 23:37",
+  "updated_at": "2026-04-30 23:53",
   "results": [
     {
       "site": "東京都 日比谷公園（人工芝）",
@@ -1656,8 +1656,8 @@
     {
       "site": "東京都 石神井公園Ｂ（人工芝）",
       "date": "5月4日（月） みどりの日",
-      "status": "⚠️ 残1枠のみ（11:00〜13:00）",
-      "color_key": "tight",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
@@ -1915,92 +1915,92 @@
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月2日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月3日（日） 憲法記念日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月4日（月） みどりの日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "✅ 空きあり（13:00〜15:00　15:00〜18:00　⚠️残1枠:11:00〜13:00）",
+      "color_key": "partial",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月5日（火） こどもの日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月6日（水） 憲法記念日 振替休日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月9日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月10日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月16日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月17日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月23日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月24日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月30日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 小金井公園（人工芝）",
       "date": "5月31日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
@@ -2111,7 +2111,7 @@
     {
       "site": "東京都 府中の森公園（人工芝）",
       "date": "5月4日（月） みどりの日",
-      "status": "✅ 空きあり（17:00〜19:00　⚠️残1枠:13:00〜15:00　15:00〜17:00　19:00〜21:00）",
+      "status": "✅ 空きあり（17:00〜19:00　⚠️残1枠:19:00〜21:00）",
       "color_key": "partial",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
@@ -2370,92 +2370,92 @@
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月2日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月3日（日） 憲法記念日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月4日（月） みどりの日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月5日（火） こどもの日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月6日（水） 憲法記念日 振替休日",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月9日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月10日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月16日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月17日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月23日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月24日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月30日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 有明テニスＣ（人工芝）",
       "date": "5月31日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "status": "❌ 満杯",
+      "color_key": "full",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
@@ -2475,8 +2475,8 @@
     {
       "site": "東京都 大井ふ頭海浜公園Ａ（ハード）",
       "date": "5月4日（月） みどりの日",
-      "status": "❌ 満杯（取得時は空きあり）",
-      "color_key": "full",
+      "status": "✅ 空きあり（11:00〜13:00　13:00〜15:00　17:00〜19:00　19:00〜21:00　7:00〜9:00　⚠️残1枠:9:00〜11:00）",
+      "color_key": "partial",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
@@ -2503,8 +2503,8 @@
     {
       "site": "東京都 大井ふ頭海浜公園Ａ（ハード）",
       "date": "5月10日（日）",
-      "status": "❌ 満杯",
-      "color_key": "full",
+      "status": "⚠️ 残1枠のみ（7:00〜9:00）",
+      "color_key": "tight",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
