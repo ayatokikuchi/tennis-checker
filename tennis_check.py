@@ -212,17 +212,23 @@ def fetch_timeslots(week_url, bld_cd, inst_cd, use_day, cookies, referer):
                              headers=headers, timeout=15)
         data = parse_ajax(resp.text)
         ymd  = int(use_day)
-        slots = set()
+        slots_stable = set()  # rsvNum >= 2
+        slots_tight  = set()  # rsvNum == 1
         for zone in data.get("result", []):
             for tr in zone.get("timeResult", []):
                 if tr.get("useDay") == ymd and tr.get("status") == 0:
-                    st = tr.get("startTime", 0)
-                    et = tr.get("endTime", 0)
-                    slots.add(f"{st//100}:{st%100:02d}〜{et//100}:{et%100:02d}")
-        return sorted(slots)
+                    st      = tr.get("startTime", 0)
+                    et      = tr.get("endTime", 0)
+                    rsv_num = tr.get("rsvNum", 0)
+                    slot    = f"{st//100}:{st%100:02d}〜{et//100}:{et%100:02d}"
+                    if rsv_num >= 2:
+                        slots_stable.add(slot)
+                    elif rsv_num == 1:
+                        slots_tight.add(slot)
+        return sorted(slots_stable), sorted(slots_tight)
     except Exception as e:
         print(f"  時間帯取得失敗 bldCd={bld_cd} {use_day}: {e}")
-        return []
+        return [], []
 
 
 def check_tokyo(target_dates, cookies, referer):
@@ -240,11 +246,22 @@ def check_tokyo(target_dates, cookies, referer):
             label = f"{date.strftime('%-m月%-d日')}（{weekday}）{' ' + holiday if holiday else ''}"
             status = status_map.get(ymd)
             if status == 100:
-                slots = fetch_timeslots(TOKYO_WEEK_URL, bld_cd, inst_cd,
-                                        date.strftime("%Y%m%d"), cookies, referer)
-                slot_str = "　".join(slots) if slots else ""
-                disp = "▲ 一部空きあり" + (f"（{slot_str}）" if slot_str else "")
-                ck = "partial"
+                slots_stable, slots_tight = fetch_timeslots(
+                    TOKYO_WEEK_URL, bld_cd, inst_cd,
+                    date.strftime("%Y%m%d"), cookies, referer)
+                if slots_stable:
+                    slot_str = "　".join(slots_stable)
+                    if slots_tight:
+                        slot_str += "　⚠️残1枠:" + "　".join(slots_tight)
+                    disp = f"✅ 空きあり（{slot_str}）"
+                    ck   = "partial"
+                elif slots_tight:
+                    slot_str = "　".join(slots_tight)
+                    disp = f"⚠️ 残1枠のみ（{slot_str}）"
+                    ck   = "tight"
+                else:
+                    disp = "❌ 満杯（取得時は空きあり）"
+                    ck   = "full"
             elif status == 200:
                 disp, ck = "❌ 満杯", "full"
             elif status == 700:
@@ -282,10 +299,21 @@ def check_minato(target_dates, cookies, referer):
             label = f"{date.strftime('%-m月%-d日')}（{weekday}）{' ' + holiday if holiday else ''}"
             disp, ck = status_to_disp(date_status.get(ymd, []))
             if ck == "partial":
-                slots = fetch_timeslots(MINATO_WEEK_URL, bld_cd, inst_cds[0],
-                                        date.strftime("%Y%m%d"), cookies, referer)
-                slot_str = "　".join(slots) if slots else ""
-                disp = "▲ 一部空きあり" + (f"（{slot_str}）" if slot_str else "")
+                slots_stable, slots_tight = fetch_timeslots(
+                    MINATO_WEEK_URL, bld_cd, inst_cds[0],
+                    date.strftime("%Y%m%d"), cookies, referer)
+                if slots_stable:
+                    slot_str = "　".join(slots_stable)
+                    if slots_tight:
+                        slot_str += "　⚠️残1枠:" + "　".join(slots_tight)
+                    disp = f"✅ 空きあり（{slot_str}）"
+                elif slots_tight:
+                    slot_str = "　".join(slots_tight)
+                    disp = f"⚠️ 残1枠のみ（{slot_str}）"
+                    ck   = "tight"
+                else:
+                    disp = "❌ 満杯（取得時は空きあり）"
+                    ck   = "full"
             results.append({
                 "site": f"港区 {park_name}",
                 "date": label, "status": disp, "color_key": ck,
@@ -298,7 +326,7 @@ def check_minato(target_dates, cookies, referer):
 def send_email(results, target_dates):
     today_str  = datetime.date.today().strftime("%Y年%m月%d日")
     date_range = f"{target_dates[0].strftime('%-m/%-d')}〜{target_dates[-1].strftime('%-m/%-d')}（土日祝）"
-    color_map  = {"partial":"#fff3cd","full":"#f0f0f0","closed":"#e9ecef","unknown":"#f8d7da"}
+    color_map  = {"partial":"#d4edda","tight":"#fff3cd","full":"#f0f0f0","closed":"#e9ecef","unknown":"#f8d7da"}
 
     partial = [r for r in results if r["color_key"] == "partial"]
     summary = f"▲ 一部空きあり：{len(partial)}件"
