@@ -374,5 +374,17 @@ if __name__ == "__main__":
         if r["color_key"] == "partial":
             print(f"  {r['site']} {r['date']}: {r['status']}")
 
+    # JSON保存（GitHub Actionsのワークスペースに保存）
+    json_data = {
+        "updated_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "results": [
+            {k: v for k, v in r.items() if k != "sort_key"}
+            for r in all_results
+        ]
+    }
+    with open("tennis_results.json", "w", encoding="utf-8") as f:
+        json.dump(json_data, f, ensure_ascii=False, indent=2)
+    print("✅ JSON保存完了: tennis_results.json")
+
     print("\n📧 メール送信中...")
     send_email(all_results, target_dates)
