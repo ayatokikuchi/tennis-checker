@@ -254,6 +254,7 @@ def check_tokyo(target_dates, cookies, referer):
             results.append({
                 "site": f"東京都 {park_name}（{court_type}）",
                 "date": label, "status": disp, "color_key": ck,
+                "sort_key": date,
                 "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
             })
         time.sleep(0.5)
@@ -288,6 +289,7 @@ def check_minato(target_dates, cookies, referer):
             results.append({
                 "site": f"港区 {park_name}",
                 "date": label, "status": disp, "color_key": ck,
+                "sort_key": date,
                 "url": "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchVacantAction.do"
             })
     return results
@@ -302,9 +304,9 @@ def send_email(results, target_dates):
     summary = f"▲ 一部空きあり：{len(partial)}件"
 
     tokyo_results  = sorted([r for r in results if r["site"].startswith("東京都")],
-                             key=lambda r: r["date"])
+                             key=lambda r: r["sort_key"])
     minato_results = sorted([r for r in results if r["site"].startswith("港区")],
-                             key=lambda r: r["date"])
+                             key=lambda r: r["sort_key"])
 
     def build_table(data, title, color):
         rows = ""
