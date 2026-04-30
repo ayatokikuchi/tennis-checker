@@ -260,7 +260,8 @@ def check_tokyo(target_dates, cookies, referer):
                     disp = f"⚠️ 残1枠のみ（{slot_str}）"
                     ck   = "tight"
                 else:
-                    disp = "❌ 満杯（取得時は空きあり）"
+                    # 月表示はstatus=100だが週表示では空きなし→除外
+                    disp = "❌ 満杯"
                     ck   = "full"
             elif status == 200:
                 disp, ck = "❌ 満杯", "full"
@@ -312,7 +313,8 @@ def check_minato(target_dates, cookies, referer):
                     disp = f"⚠️ 残1枠のみ（{slot_str}）"
                     ck   = "tight"
                 else:
-                    disp = "❌ 満杯（取得時は空きあり）"
+                    # 月表示はstatus=100だが週表示では空きなし→除外
+                    disp = "❌ 満杯"
                     ck   = "full"
             results.append({
                 "site": f"港区 {park_name}",
