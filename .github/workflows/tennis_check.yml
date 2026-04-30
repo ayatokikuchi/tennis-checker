@@ -1,0 +1,33 @@
+name: テニスコート空き状況チェック
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 毎日UTC 0:00 = JST 9:00
+  workflow_dispatch:       # 手動実行も可能
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Chrome インストール
+        uses: browser-actions/setup-chrome@v1
+
+      - name: 依存ライブラリをインストール
+        run: |
+          pip install selenium requests beautifulsoup4 jpholiday webdriver-manager
+
+      - name: テニスコート空き確認＆メール送信
+        env:
+          FROM_EMAIL  : ${{ secrets.FROM_EMAIL }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+        run: python tennis_check.py
