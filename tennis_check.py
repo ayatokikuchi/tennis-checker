@@ -53,6 +53,12 @@ MINATO_PARKS = {
     "70300": ("芝浦中央公園運動場", ["70300070", "70300080", "70300090", "70300100"]),
 }
 
+TOKYO_AJAX_URL  = "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
+MINATO_AJAX_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
+TOKYO_WEEK_URL  = "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAjaxAction.do"
+MINATO_WEEK_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchVacantAjaxAction.do"
+
+
 def get_holiday_and_weekend_dates(base_date):
     dates = []
     for month_offset in [0, 1]:
@@ -67,6 +73,7 @@ def get_holiday_and_weekend_dates(base_date):
                 dates.append(d)
     return dates
 
+
 def get_driver():
     options = Options()
     options.add_argument("--headless=new")
@@ -76,15 +83,18 @@ def get_driver():
     options.add_argument("--window-size=1920,1080")
     return webdriver.Chrome(options=options)
 
+
 def wait_page(driver, t=3):
     WebDriverWait(driver, 15).until(
         lambda d: d.execute_script("return document.readyState") == "complete"
     )
     time.sleep(t)
 
+
 def parse_ajax(resp_text):
     raw = re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', resp_text)
-    return json.loads(raw).get("result", [])
+    return json.loads(raw)
+
 
 def status_to_disp(statuses):
     if not statuses:
@@ -94,6 +104,7 @@ def status_to_disp(statuses):
     if all(s == 700 for s in statuses):
         return "－ 営業時間外", "closed"
     return "❌ 満杯", "full"
+
 
 def get_session():
     print("東京都セッション確立中...")
@@ -172,36 +183,8 @@ def get_session():
 
     return tokyo_cookies, tokyo_referer, minato_cookies, minato_referer
 
-TOKYO_WEEK_URL  = "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAjaxAction.do"
-MINATO_WEEK_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchVacantAjaxAction.do"
 
-def fetch_timeslots(week_url, bld_cd, inst_cd, use_day, cookies, referer):
-    """指定日の空き時間帯を取得。返り値: ["9:00〜11:00", "17:00〜19:00", ...]"""
-    payload = {
-        "displayNo": "prwrc2000", "useDay": use_day,
-        "bldCd": bld_cd, "instCd": inst_cd, "transVacantMode": "0",
-    }
-    headers = {"Referer": referer, "X-Requested-With": "XMLHttpRequest"}
-    try:
-        resp = requests.post(week_url, data=payload, cookies=cookies,
-                             headers=headers, timeout=15)
-        raw  = re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', resp.text)
-        data = json.loads(raw)
-        ymd  = int(use_day)
-        slots = set()
-        for zone in data.get("result", []):
-            for tr in zone.get("timeResult", []):
-                if tr.get("useDay") == ymd and tr.get("status") == 0:
-                    st = tr.get("startTime", 0)
-                    et = tr.get("endTime",   0)
-                    slots.add(f"{st//100}:{st%100:02d}〜{et//100}:{et%100:02d}")
-        return sorted(slots)
-    except Exception as e:
-        print(f"  時間帯取得失敗 bldCd={bld_cd} {use_day}: {e}")
-        return []
-
-TOKYO_AJAX_URL  = "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
-MINATO_AJAX_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
+def fetch_vacancy(ajax_url, bld_cd, inst_cd, use_day, cookies, referer, retry=2):
     payload = {
         "displayNo": "prwrc2000", "useDay": use_day,
         "bldCd": bld_cd, "instCd": inst_cd, "transVacantMode": "0",
@@ -211,11 +194,36 @@ MINATO_AJAX_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchMonthVacantAj
         try:
             resp = requests.post(ajax_url, data=payload, cookies=cookies,
                                  headers=headers, timeout=30)
-            return parse_ajax(resp.text)
+            return parse_ajax(resp.text).get("result", [])
         except Exception as e:
             print(f"  Ajax失敗 bldCd={bld_cd} (試行{attempt+1}/{retry}): {e}")
             time.sleep(3)
     return []
+
+
+def fetch_timeslots(week_url, bld_cd, inst_cd, use_day, cookies, referer):
+    payload = {
+        "displayNo": "prwrc2000", "useDay": use_day,
+        "bldCd": bld_cd, "instCd": inst_cd, "transVacantMode": "0",
+    }
+    headers = {"Referer": referer, "X-Requested-With": "XMLHttpRequest"}
+    try:
+        resp = requests.post(week_url, data=payload, cookies=cookies,
+                             headers=headers, timeout=15)
+        data = parse_ajax(resp.text)
+        ymd  = int(use_day)
+        slots = set()
+        for zone in data.get("result", []):
+            for tr in zone.get("timeResult", []):
+                if tr.get("useDay") == ymd and tr.get("status") == 0:
+                    st = tr.get("startTime", 0)
+                    et = tr.get("endTime", 0)
+                    slots.add(f"{st//100}:{st%100:02d}〜{et//100}:{et%100:02d}")
+        return sorted(slots)
+    except Exception as e:
+        print(f"  時間帯取得失敗 bldCd={bld_cd} {use_day}: {e}")
+        return []
+
 
 def check_tokyo(target_dates, cookies, referer):
     results = []
@@ -232,20 +240,25 @@ def check_tokyo(target_dates, cookies, referer):
             label = f"{date.strftime('%-m月%-d日')}（{weekday}）{' ' + holiday if holiday else ''}"
             status = status_map.get(ymd)
             if status == 100:
-                # 空きあり→時間帯を取得
                 slots = fetch_timeslots(TOKYO_WEEK_URL, bld_cd, inst_cd,
                                         date.strftime("%Y%m%d"), cookies, referer)
                 slot_str = "　".join(slots) if slots else ""
                 disp = "▲ 一部空きあり" + (f"（{slot_str}）" if slot_str else "")
-                ck   = "partial"
-            elif status == 200: disp, ck = "❌ 満杯", "full"
-            elif status == 700: disp, ck = "－ 営業時間外", "closed"
-            else:               disp, ck = "⚠️ 情報なし", "unknown"
-            results.append({"site": f"東京都 {park_name}（{court_type}）", "date": label,
-                            "status": disp, "color_key": ck,
-                            "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"})
+                ck = "partial"
+            elif status == 200:
+                disp, ck = "❌ 満杯", "full"
+            elif status == 700:
+                disp, ck = "－ 営業時間外", "closed"
+            else:
+                disp, ck = "⚠️ 情報なし", "unknown"
+            results.append({
+                "site": f"東京都 {park_name}（{court_type}）",
+                "date": label, "status": disp, "color_key": ck,
+                "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
+            })
         time.sleep(0.5)
     return results
+
 
 def check_minato(target_dates, cookies, referer):
     results = []
@@ -268,15 +281,17 @@ def check_minato(target_dates, cookies, referer):
             label = f"{date.strftime('%-m月%-d日')}（{weekday}）{' ' + holiday if holiday else ''}"
             disp, ck = status_to_disp(date_status.get(ymd, []))
             if ck == "partial":
-                # 空きあり→時間帯を取得（複数コートの場合は最初の1つで代表）
                 slots = fetch_timeslots(MINATO_WEEK_URL, bld_cd, inst_cds[0],
                                         date.strftime("%Y%m%d"), cookies, referer)
                 slot_str = "　".join(slots) if slots else ""
                 disp = "▲ 一部空きあり" + (f"（{slot_str}）" if slot_str else "")
-            results.append({"site": f"港区 {park_name}", "date": label,
-                            "status": disp, "color_key": ck,
-                            "url": "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchVacantAction.do"})
+            results.append({
+                "site": f"港区 {park_name}",
+                "date": label, "status": disp, "color_key": ck,
+                "url": "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchVacantAction.do"
+            })
     return results
+
 
 def send_email(results, target_dates):
     today_str  = datetime.date.today().strftime("%Y年%m月%d日")
@@ -286,7 +301,6 @@ def send_email(results, target_dates):
     partial = [r for r in results if r["color_key"] == "partial"]
     summary = f"▲ 一部空きあり：{len(partial)}件"
 
-    # 東京都・港区に分けて日付順にソート
     tokyo_results  = sorted([r for r in results if r["site"].startswith("東京都")],
                              key=lambda r: r["date"])
     minato_results = sorted([r for r in results if r["site"].startswith("港区")],
@@ -305,15 +319,14 @@ def send_email(results, target_dates):
                 "</tr>"
             )
         return (
-            "<h2 style=\"color:#2e7d32;margin:20px 0 8px;font-size:16px;\">" + title + "</h2>"
+            "<h2 style=\"color:" + color + ";margin:20px 0 8px;font-size:16px;\">" + title + "</h2>"
             "<table style=\"width:100%;border-collapse:collapse;margin-bottom:24px;\">"
             "<tr style=\"background:" + color + ";color:#fff;\">"
             "<th style=\"padding:8px;border:1px solid #ddd;\">日付</th>"
             "<th style=\"padding:8px;border:1px solid #ddd;\">施設</th>"
-            "<th style=\"padding:8px;border:1px solid #ddd;\">状況</th>"
+            "<th style=\"padding:8px;border:1px solid #ddd;\">状況・空き時間帯</th>"
             "<th style=\"padding:8px;border:1px solid #ddd;\">リンク</th>"
-            "</tr>" + rows +
-            "</table>"
+            "</tr>" + rows + "</table>"
         )
 
     html = (
@@ -338,6 +351,7 @@ def send_email(results, target_dates):
         server.login(CONFIG["FROM_EMAIL"], CONFIG["APP_PASSWORD"])
         server.sendmail(CONFIG["FROM_EMAIL"], CONFIG["TO_EMAIL"], msg.as_string())
     print("✅ メール送信完了！")
+
 
 if __name__ == "__main__":
     today = datetime.date.today()
