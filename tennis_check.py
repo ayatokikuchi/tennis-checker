@@ -13,45 +13,10 @@ CONFIG = {
 }
 
 TOKYO_PARKS = {
-    "1000": ("日比谷公園",         "10000030", "人工芝"),
-    "1010": ("芝公園",             "10100030", "人工芝"),
-    "1040": ("猿江恩賜公園",       "10400030", "人工芝"),
-    "1050": ("亀戸中央公園",       "10500030", "人工芝"),
-    "1060": ("木場公園",           "10600030", "人工芝"),
-    "1070": ("祖師谷公園",         "10700030", "人工芝"),
-    "1090": ("東白鬚公園",         "10900030", "人工芝"),
-    "1100": ("浮間公園",           "11000030", "人工芝"),
-    "1110": ("城北中央公園",       "11100030", "人工芝"),
-    "1120": ("赤塚公園",           "11200030", "人工芝"),
-    "1130": ("東綾瀬公園",         "11300030", "人工芝"),
-    "1140": ("舎人公園",           "11400030", "人工芝"),
-    "1150": ("篠崎公園Ａ",         "11500030", "人工芝"),
-    "1160": ("大島小松川公園",     "11600030", "人工芝"),
-    "1170": ("汐入公園",           "11700030", "人工芝"),
-    "1175": ("高井戸公園",         "11750030", "人工芝"),
-    "1180": ("善福寺川緑地",       "11800030", "人工芝"),
-    "1190": ("光が丘公園",         "11900030", "人工芝"),
-    "1205": ("石神井公園Ｂ",       "12050030", "人工芝"),
-    "1220": ("井の頭恩賜公園",     "12200030", "人工芝"),
-    "1230": ("武蔵野中央公園",     "12300030", "人工芝"),
-    "1240": ("小金井公園",         "12400020", "人工芝"),
-    "1260": ("野川公園",           "12600030", "人工芝"),
-    "1270": ("府中の森公園",       "12700030", "人工芝"),
-    "1280": ("東大和南公園",       "12800030", "人工芝"),
-    "1315": ("大井ふ頭海浜公園Ｂ", "13150030", "人工芝"),
-    "1360": ("有明テニスＣ",       "13600010", "人工芝"),
-    "1310": ("大井ふ頭海浜公園Ａ", "13100020", "ハード"),
-    "1350": ("有明テニスＡ屋外",   "13500010", "ハード"),
-    "1370": ("有明テニスＢ屋内",   "13700020", "ハード"),
+    "1280": ("東大和南公園", "12800030", "人工芝"),  # ※稼働確認用
 }
 
-MINATO_PARKS = {
-    "70100": ("麻布運動場",         ["70100070", "70100080", "70100090", "70100100"]),
-    "70200": ("青山運動場",         ["70200020", "70200030"]),
-    "85580": ("青山中学校",         ["85580050", "85580060", "85580550", "85580560"]),
-    "85530": ("高松中学校",         ["85530050", "85530550"]),
-    "70300": ("芝浦中央公園運動場", ["70300070", "70300080", "70300090", "70300100"]),
-}
+MINATO_PARKS = {}  # ※稼働確認中は港区除外
 
 TOKYO_AJAX_URL  = "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
 MINATO_AJAX_URL = "https://web101.rsv.ws-scs.jp/web/rsvWOpeInstSrchMonthVacantAjaxAction.do"
@@ -251,16 +216,10 @@ def check_tokyo(target_dates, cookies, referer):
                     date.strftime("%Y%m%d"), cookies, referer)
                 if slots_stable:
                     slot_str = "　".join(slots_stable)
-                    if slots_tight:
-                        slot_str += "　⚠️残1枠:" + "　".join(slots_tight)
                     disp = f"✅ 空きあり（{slot_str}）"
                     ck   = "partial"
-                elif slots_tight:
-                    slot_str = "　".join(slots_tight)
-                    disp = f"⚠️ 残1枠のみ（{slot_str}）"
-                    ck   = "tight"
                 else:
-                    # 月表示はstatus=100だが週表示では空きなし→除外
+                    # rsvNum=1は信頼性が低いため除外
                     disp = "❌ 満杯"
                     ck   = "full"
             elif status == 200:
@@ -300,22 +259,12 @@ def check_minato(target_dates, cookies, referer):
             label = f"{date.strftime('%-m月%-d日')}（{weekday}）{' ' + holiday if holiday else ''}"
             disp, ck = status_to_disp(date_status.get(ymd, []))
             if ck == "partial":
-                slots_stable, slots_tight = fetch_timeslots(
-                    MINATO_WEEK_URL, bld_cd, inst_cds[0],
-                    date.strftime("%Y%m%d"), cookies, referer)
-                if slots_stable:
-                    slot_str = "　".join(slots_stable)
-                    if slots_tight:
-                        slot_str += "　⚠️残1枠:" + "　".join(slots_tight)
-                    disp = f"✅ 空きあり（{slot_str}）"
-                elif slots_tight:
-                    slot_str = "　".join(slots_tight)
-                    disp = f"⚠️ 残1枠のみ（{slot_str}）"
-                    ck   = "tight"
+                slots = fetch_timeslots(MINATO_WEEK_URL, bld_cd, inst_cds[0],
+                                        date.strftime("%Y%m%d"), cookies, referer)
+                if slots:
+                    disp = "✅ 空きあり（" + "　".join(slots) + "）"
                 else:
-                    # 月表示はstatus=100だが週表示では空きなし→除外
-                    disp = "❌ 満杯"
-                    ck   = "full"
+                    disp, ck = "❌ 満杯", "full"
             results.append({
                 "site": f"港区 {park_name}",
                 "date": label, "status": disp, "color_key": ck,
@@ -328,7 +277,7 @@ def check_minato(target_dates, cookies, referer):
 def send_email(results, target_dates):
     today_str  = datetime.date.today().strftime("%Y年%m月%d日")
     date_range = f"{target_dates[0].strftime('%-m/%-d')}〜{target_dates[-1].strftime('%-m/%-d')}（土日祝）"
-    color_map  = {"partial":"#d4edda","tight":"#fff3cd","full":"#f0f0f0","closed":"#e9ecef","unknown":"#f8d7da"}
+    color_map  = {"partial":"#d4edda","full":"#f0f0f0","closed":"#e9ecef","unknown":"#f8d7da"}
 
     partial = [r for r in results if r["color_key"] == "partial"]
     summary = f"▲ 一部空きあり：{len(partial)}件"
@@ -370,7 +319,10 @@ def send_email(results, target_dates):
         "<div style=\"background:#fff;padding:20px;border-radius:0 0 8px 8px;overflow-x:auto;\">"
         + build_table(tokyo_results,  "🌳 東京都のコート", "#2e7d32")
         + build_table(minato_results, "🏙️ 港区のコート",   "#1565c0")
-        + "<p style=\"margin-top:8px;font-size:11px;color:#aaa;\">▲一部空きあり＝黄色　❌満杯＝グレー　－営業時間外＝薄グレー</p>"
+        +         "<p style=\"margin-top:8px;font-size:12px;color:#e65100;background:#fff3e0;padding:10px;border-radius:4px;\">"
+        "⚠️ <b>注意</b>：空き情報は取得時点のものです。実際に予約する前に必ずサイトで最新の空き状況をご確認ください。"
+        "</p>"
+        "<p style=\"margin-top:8px;font-size:11px;color:#aaa;\">✅空きあり（2枠以上）＝緑　❌満杯＝グレー　－営業時間外＝薄グレー</p>"
         "</div></div>"
     )
 
