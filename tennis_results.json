@@ -1,53 +1,53 @@
 {
-  "updated_at": "2026-05-01 00:23",
+  "updated_at": "2026-05-01 00:46",
   "results": [
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月1日（金）",
-      "status": "－ 営業時間外",
-      "color_key": "closed",
+      "status": "⚠️ 情報なし",
+      "color_key": "unknown",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月2日（土）",
-      "status": "❌ 満杯",
-      "color_key": "full",
+      "status": "⚠️ 情報なし",
+      "color_key": "unknown",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月3日（日） 憲法記念日",
-      "status": "❌ 満杯",
-      "color_key": "full",
+      "status": "⚠️ 情報なし",
+      "color_key": "unknown",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月4日（月） みどりの日",
-      "status": "✅ 空きあり（13:00〜15:00）",
-      "color_key": "partial",
+      "status": "⚠️ 情報なし",
+      "color_key": "unknown",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月5日（火） こどもの日",
-      "status": "❌ 満杯",
-      "color_key": "full",
+      "status": "⚠️ 情報なし",
+      "color_key": "unknown",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月6日（水） 憲法記念日 振替休日",
-      "status": "❌ 満杯",
-      "color_key": "full",
+      "status": "⚠️ 情報なし",
+      "color_key": "unknown",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     },
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月7日（木）",
-      "status": "✅ 空きあり（11:00〜13:00　13:00〜15:00　15:00〜18:00　9:00〜11:00）",
-      "color_key": "partial",
+      "status": "⚠️ 情報なし",
+      "color_key": "unknown",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     }
   ]
