@@ -1,10 +1,10 @@
 name: テニスコート空き状況チェック
 
 on:
-  schedule:
-    - cron: '0 0 * * *'   # 毎日UTC 0:00 = JST 9:00
-    - cron: '0 12 * * *'  # 毎日UTC 12:00 = JST 21:00
-  workflow_dispatch:       # 手動実行も可能
+  # schedule:
+  #   - cron: '0 0 * * *'   # 毎日UTC 0:00 = JST 9:00
+  #   - cron: '0 12 * * *'  # 毎日UTC 12:00 = JST 21:00
+  workflow_dispatch:       # 手動実行のみ
 
 jobs:
   check:
