@@ -49,14 +49,29 @@ def get_driver():
     return webdriver.Chrome(options=options)
 
 
+def safe_execute(driver, script, *args):
+    """アラートが出た場合は閉じてリトライ"""
+    for attempt in range(3):
+        try:
+            return driver.execute_script(script, *args)
+        except Exception as e:
+            if "Alert" in str(e) or "alert" in str(e):
+                try:
+                    driver.switch_to.alert.accept()
+                    print(f"  アラートを閉じました（試行{attempt+1}）")
+                    time.sleep(5)
+                except:
+                    pass
+            else:
+                raise e
+    return None
+
+
 def wait_page(driver, t=3):
     WebDriverWait(driver, 15).until(
         lambda d: d.execute_script("return document.readyState") == "complete"
     )
     time.sleep(t)
-
-
-def parse_ajax(resp_text):
     raw = re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', resp_text)
     return json.loads(raw)
 
@@ -76,10 +91,10 @@ def get_session():
     driver = get_driver()
     try:
         driver.get("https://kouen.sports.metro.tokyo.lg.jp/web/")
-        time.sleep(4)
-        driver.execute_script("doAction(document.form1, gRsvWOpeInstSrchVacantAction)")
-        time.sleep(5)
-        driver.execute_script("""
+        time.sleep(6)
+        safe_execute(driver, "doAction(document.form1, gRsvWOpeInstSrchVacantAction)")
+        time.sleep(6)
+        safe_execute(driver, """
             var sel = document.getElementById('purpose');
             for (var i = 0; i < sel.options.length; i++) {
                 if (sel.options[i].text === 'テニス（人工芝）') {
@@ -89,8 +104,8 @@ def get_session():
                 }
             }
         """)
-        time.sleep(3)
-        driver.execute_script("""
+        time.sleep(4)
+        safe_execute(driver, """
             var sel = document.getElementById('bname');
             for (var i = 0; i < sel.options.length; i++) {
                 if (sel.options[i].value === '1140') {
@@ -100,9 +115,9 @@ def get_session():
                 }
             }
         """)
-        time.sleep(3)
-        driver.execute_script("doSearch(document.form1, gRsvWOpeInstSrchVacantAction)")
-        time.sleep(6)
+        time.sleep(4)
+        safe_execute(driver, "doSearch(document.form1, gRsvWOpeInstSrchVacantAction)")
+        time.sleep(8)
         tokyo_cookies = {c['name']: c['value'] for c in driver.get_cookies()}
         tokyo_referer = driver.current_url
         print("✅ 東京都セッション確立完了")
@@ -113,10 +128,10 @@ def get_session():
     driver = get_driver()
     try:
         driver.get("https://web101.rsv.ws-scs.jp/web/")
-        time.sleep(4)
-        driver.execute_script("doAction(document.form1, gRsvWOpeInstSrchVacantAction)")
-        time.sleep(5)
-        driver.execute_script("""
+        time.sleep(6)
+        safe_execute(driver, "doAction(document.form1, gRsvWOpeInstSrchVacantAction)")
+        time.sleep(6)
+        safe_execute(driver, """
             var sel = document.getElementById('purpose') || document.querySelector('[name=purpose]');
             for (var i = 0; i < sel.options.length; i++) {
                 if (sel.options[i].text === 'テニス') {
@@ -126,8 +141,8 @@ def get_session():
                 }
             }
         """)
-        time.sleep(3)
-        driver.execute_script("""
+        time.sleep(4)
+        safe_execute(driver, """
             var sel = document.getElementById('bname') || document.querySelector('[name=bname]');
             for (var i = 0; i < sel.options.length; i++) {
                 if (sel.options[i].value === '1000_70100') {
@@ -137,9 +152,9 @@ def get_session():
                 }
             }
         """)
-        time.sleep(3)
-        driver.execute_script("doSearch(document.form1, gRsvWOpeInstSrchVacantAction)")
-        time.sleep(6)
+        time.sleep(4)
+        safe_execute(driver, "doSearch(document.form1, gRsvWOpeInstSrchVacantAction)")
+        time.sleep(8)
         minato_cookies = {c['name']: c['value'] for c in driver.get_cookies()}
         minato_referer = driver.current_url
         print("✅ 港区セッション確立完了")
