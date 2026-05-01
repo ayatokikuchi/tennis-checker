@@ -50,18 +50,31 @@ def get_driver():
 
 
 def safe_execute(driver, script, *args):
-    """アラートが出た場合は閉じてリトライ"""
+    """ページロード完了を待ってからJS実行、アラートも処理"""
     for attempt in range(3):
         try:
+            # ページロード完了まで待機
+            WebDriverWait(driver, 20).until(
+                lambda d: d.execute_script("return document.readyState") == "complete"
+            )
+            # doActionが定義されるまで待機
+            if "doAction" in script:
+                WebDriverWait(driver, 20).until(
+                    lambda d: d.execute_script("return typeof doAction !== 'undefined'")
+                )
             return driver.execute_script(script, *args)
         except Exception as e:
-            if "Alert" in str(e) or "alert" in str(e):
+            err = str(e)
+            if "Alert" in err or "alert" in err:
                 try:
                     driver.switch_to.alert.accept()
                     print(f"  アラートを閉じました（試行{attempt+1}）")
                     time.sleep(5)
                 except:
                     pass
+            elif "doAction is not defined" in err or "unexpected alert" in err.lower():
+                print(f"  JS未定義、再待機中（試行{attempt+1}）")
+                time.sleep(5)
             else:
                 raise e
     return None
