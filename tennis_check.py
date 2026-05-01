@@ -94,78 +94,43 @@ def get_session():
     print("東京都セッション確立中...")
     driver = get_driver()
     try:
-        driver.get("https://kouen.sports.metro.tokyo.lg.jp/web/")
-        time.sleep(10)  # 十分に待機
-        safe_execute(driver, "doAction(document.form1, gRsvWOpeInstSrchVacantAction)")
-        time.sleep(6)
-        safe_execute(driver, """
+        driver.get("https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do")
+        time.sleep(8)
+        print(f"  タイトル: {driver.title}")
+        driver.execute_script("""
             var sel = document.getElementById('purpose');
-            for (var i = 0; i < sel.options.length; i++) {
-                if (sel.options[i].text === 'テニス（人工芝）') {
-                    sel.selectedIndex = i;
-                    sel.dispatchEvent(new Event('change', {bubbles: true}));
-                    break;
+            if (sel) {
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].text === 'テニス（人工芝）') {
+                        sel.selectedIndex = i;
+                        sel.dispatchEvent(new Event('change', {bubbles: true}));
+                        break;
+                    }
                 }
             }
         """)
         time.sleep(4)
-        safe_execute(driver, """
+        driver.execute_script("""
             var sel = document.getElementById('bname');
-            for (var i = 0; i < sel.options.length; i++) {
-                if (sel.options[i].value === '1140') {
-                    sel.selectedIndex = i;
-                    sel.dispatchEvent(new Event('change', {bubbles: true}));
-                    break;
+            if (sel) {
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value === '1280') {
+                        sel.selectedIndex = i;
+                        sel.dispatchEvent(new Event('change', {bubbles: true}));
+                        break;
+                    }
                 }
             }
         """)
         time.sleep(4)
-        safe_execute(driver, "doSearch(document.form1, gRsvWOpeInstSrchVacantAction)")
+        driver.execute_script("if(typeof doSearch!=='undefined') doSearch(document.form1, gRsvWOpeInstSrchVacantAction)")
         time.sleep(8)
         tokyo_cookies = {c['name']: c['value'] for c in driver.get_cookies()}
         tokyo_referer = driver.current_url
-        print("✅ 東京都セッション確立完了")
+        print(f"✅ 東京都セッション確立完了: {tokyo_referer}")
     finally:
         driver.quit()
-
-    print("港区セッション確立中...")
-    driver = get_driver()
-    try:
-        driver.get("https://web101.rsv.ws-scs.jp/web/")
-        time.sleep(6)
-        safe_execute(driver, "doAction(document.form1, gRsvWOpeInstSrchVacantAction)")
-        time.sleep(6)
-        safe_execute(driver, """
-            var sel = document.getElementById('purpose') || document.querySelector('[name=purpose]');
-            for (var i = 0; i < sel.options.length; i++) {
-                if (sel.options[i].text === 'テニス') {
-                    sel.selectedIndex = i;
-                    sel.dispatchEvent(new Event('change', {bubbles: true}));
-                    break;
-                }
-            }
-        """)
-        time.sleep(4)
-        safe_execute(driver, """
-            var sel = document.getElementById('bname') || document.querySelector('[name=bname]');
-            for (var i = 0; i < sel.options.length; i++) {
-                if (sel.options[i].value === '1000_70100') {
-                    sel.selectedIndex = i;
-                    sel.dispatchEvent(new Event('change', {bubbles: true}));
-                    break;
-                }
-            }
-        """)
-        time.sleep(4)
-        safe_execute(driver, "doSearch(document.form1, gRsvWOpeInstSrchVacantAction)")
-        time.sleep(8)
-        minato_cookies = {c['name']: c['value'] for c in driver.get_cookies()}
-        minato_referer = driver.current_url
-        print("✅ 港区セッション確立完了")
-    finally:
-        driver.quit()
-
-    return tokyo_cookies, tokyo_referer, minato_cookies, minato_referer
+    return tokyo_cookies, tokyo_referer, {}, ""
 
 
 def fetch_vacancy(ajax_url, bld_cd, inst_cd, use_day, cookies, referer, retry=2):
