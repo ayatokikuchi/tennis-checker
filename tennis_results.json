@@ -1,6 +1,13 @@
 {
-  "updated_at": "2026-05-01 00:16",
+  "updated_at": "2026-05-01 00:23",
   "results": [
+    {
+      "site": "東京都 東大和南公園（人工芝）",
+      "date": "5月1日（金）",
+      "status": "－ 営業時間外",
+      "color_key": "closed",
+      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
+    },
     {
       "site": "東京都 東大和南公園（人工芝）",
       "date": "5月2日（土）",
@@ -38,114 +45,9 @@
     },
     {
       "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月9日（土）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月10日（日）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月16日（土）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月17日（日）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月23日（土）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月24日（日）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月30日（土）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "5月31日（日）",
-      "status": "❌ 満杯",
-      "color_key": "full",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月6日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月7日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月13日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月14日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月20日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月21日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月27日（土）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
-      "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
-    },
-    {
-      "site": "東京都 東大和南公園（人工芝）",
-      "date": "6月28日（日）",
-      "status": "⚠️ 情報なし",
-      "color_key": "unknown",
+      "date": "5月7日（木）",
+      "status": "✅ 空きあり（11:00〜13:00　13:00〜15:00　15:00〜18:00　9:00〜11:00）",
+      "color_key": "partial",
       "url": "https://kouen.sports.metro.tokyo.lg.jp/web/rsvWOpeInstSrchVacantAction.do"
     }
   ]
