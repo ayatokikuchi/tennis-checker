@@ -50,34 +50,25 @@ def get_driver():
 
 
 def safe_execute(driver, script, *args):
-    """ページロード完了を待ってからJS実行、アラートも処理"""
+    """JS実行、アラートが出た場合は閉じてリトライ"""
     for attempt in range(3):
         try:
-            # ページロード完了まで待機
-            WebDriverWait(driver, 20).until(
-                lambda d: d.execute_script("return document.readyState") == "complete"
-            )
-            # doActionが定義されるまで待機
-            if "doAction" in script:
-                WebDriverWait(driver, 20).until(
-                    lambda d: d.execute_script("return typeof doAction !== 'undefined'")
-                )
             return driver.execute_script(script, *args)
         except Exception as e:
             err = str(e)
-            if "Alert" in err or "alert" in err:
+            if "Alert" in err or "alert" in err or "unexpected alert" in err.lower():
                 try:
                     driver.switch_to.alert.accept()
                     print(f"  アラートを閉じました（試行{attempt+1}）")
-                    time.sleep(5)
                 except:
                     pass
-            elif "doAction is not defined" in err or "unexpected alert" in err.lower():
-                print(f"  JS未定義、再待機中（試行{attempt+1}）")
                 time.sleep(5)
+            elif "not defined" in err:
+                print(f"  JS未定義、再待機中（試行{attempt+1}）")
+                time.sleep(8)
             else:
                 raise e
-    return None
+    raise Exception(f"safe_execute失敗: {script[:50]}")
 
 
 def wait_page(driver, t=3):
@@ -104,7 +95,7 @@ def get_session():
     driver = get_driver()
     try:
         driver.get("https://kouen.sports.metro.tokyo.lg.jp/web/")
-        time.sleep(6)
+        time.sleep(10)  # 十分に待機
         safe_execute(driver, "doAction(document.form1, gRsvWOpeInstSrchVacantAction)")
         time.sleep(6)
         safe_execute(driver, """
