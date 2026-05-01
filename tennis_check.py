@@ -338,9 +338,12 @@ def send_email(results, target_dates):
 
 
 if __name__ == "__main__":
-    today = datetime.date.today()
-    target_dates = get_holiday_and_weekend_dates(today)
-    print(f"チェック対象: {len(target_dates)}日")
+    # ※稼働確認用：東大和南公園のみ・5/1〜5/7
+    target_dates = [
+        datetime.date(2026, 5, 1) + datetime.timedelta(days=i)
+        for i in range(7)
+    ]
+    print(f"チェック対象: {target_dates[0]} 〜 {target_dates[-1]}（{len(target_dates)}日間）")
 
     tokyo_cookies, tokyo_referer, minato_cookies, minato_referer = get_session()
 
